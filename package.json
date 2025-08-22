@@ -1,0 +1,19 @@
+{
+  "name": "restful-payment-gateway",
+  "version": "1.0.0",
+  "description": " a basic RESTful API that allows small businesses to accept payments ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:DEV": "NODE_ENV=development nodemon server.js",
+    "start:PROD": "NODE_ENV=production nodemon server.js"
+  },
+  "author": "oluwatosin oni",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "morgan": "^1.10.1"
+  }
+}
