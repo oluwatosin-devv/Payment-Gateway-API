@@ -14,9 +14,6 @@ jobs:
       matrix:
         node-version: [18.x, 20.x, 22.x]
 
-    env:
-      PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY }}
-
     steps:
       - uses: actions/checkout@v4
 
@@ -27,13 +24,24 @@ jobs:
           cache: 'npm'
 
       - run: npm install
+
       - run: npm run build --if-present
+
       - name: Debug environment
+        env:
+          PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY }}
         run: |
           echo "Node version: $(node --version)"
           echo "NPM version: $(npm --version)"
           echo "PAYSTACK_SECRET_KEY exists: $([[ -n "$PAYSTACK_SECRET_KEY" ]] && echo "yes" || echo "no")"
+          echo "PAYSTACK_SECRET_KEY length: ${#PAYSTACK_SECRET_KEY}"
+          echo "Key starts with sk_test: $([[ "$PAYSTACK_SECRET_KEY" == sk_test_* ]] && echo "yes" || echo "no")"
           echo "Environment variables count: $(env | wc -l)"
+          echo "CI variable: $CI"
+          echo "NODE_ENV: $NODE_ENV"
 
       - name: Run Integration Tests
-        run: npm test
+        env:
+          PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY }}
+          NODE_ENV: test
+        run: npm test -- --verbose --detectOpenHandles
