@@ -43,5 +43,6 @@ jobs:
       - name: Run Integration Tests
         env:
           PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY }}
+          API_ENDPOINT: /api/v1
           NODE_ENV: test
         run: npm test -- --verbose --detectOpenHandles
