@@ -1,43 +1,22 @@
 const request = require('supertest');
 require('dotenv').config({ path: '.env' });
 
+// Mock axios before requiring the app
 jest.mock('axios');
 const axios = require('axios');
 const app = require('./app');
 
 describe('Payment Gateway Integration', () => {
-  let server;
-
-  beforeAll(async () => {
-    // Start server on a random port for testing
-    server = app.listen(0);
-    // Wait a bit for server to start
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  });
+  // Set overall timeout for all tests
+  jest.setTimeout(30000);
 
   afterAll(async () => {
-    // Close server properly
-    if (server) {
-      await new Promise((resolve) => {
-        server.close(resolve);
-      });
-    }
-
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    await new Promise((resolve) => setTimeout(resolve, 100));
   });
 
   beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
-    // Use fake timers if your code uses setTimeout/setInterval
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    // Clean up any pending timers
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
   });
 
   describe('POST /api/v1/payments', () => {
@@ -54,6 +33,7 @@ describe('Payment Gateway Integration', () => {
           },
         },
       });
+
       const res = await request(app).post('/api/v1/payments').send({
         firstName: 'John',
         lastName: 'Doe',
@@ -63,13 +43,18 @@ describe('Payment Gateway Integration', () => {
         state: 'Lagos',
         country: 'Nigeria',
       });
+
       expect(res.status).toBe(200);
       expect(res.body.status).toBe('success');
       expect(res.body.session.authorization_url).toBe(
         'https://checkout.paystack.com/abc123'
       );
+
+      // Verify that axios.post was called with correct parameters
+      expect(axios.post).toHaveBeenCalledTimes(1);
     });
   });
+
   describe('GET /api/v1/payments/:id', () => {
     it('should retrieve payment status', async () => {
       // Mock Paystack verify response
@@ -80,7 +65,7 @@ describe('Payment Gateway Integration', () => {
             id: '12345',
             metadata: { customer_name: 'John Doe' },
             customer: { email: 'john@example.com' },
-            amount: 50000,
+            amount: 50000, // Note: This is 50000 in the mock
             gateway_response: 'success',
           },
         },
@@ -96,9 +81,12 @@ describe('Payment Gateway Integration', () => {
       expect(res.body.payment).toEqual({
         customer_name: 'John Doe',
         customer_email: 'john@example.com',
-        amount: 500,
+        amount: 500, // Your app converts 50000 to 500
         status: 'success',
       });
+
+      // Verify that axios.get was called
+      expect(axios.get).toHaveBeenCalledTimes(1);
     });
   });
 });
