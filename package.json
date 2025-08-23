@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "NODE_ENV=test jest --detectOpenHandles --maxWorkers=1",
-    "test:ci": "NODE_ENV=test jest --detectOpenHandles --forceExit --maxWorkers=1 --coverage",
+    "test": "jest",
     "start:DEV": "NODE_ENV=development nodemon server.js",
     "start:PROD": "NODE_ENV=production node server.js",
     "build": "echo \"No build needed for plain JS API\""
