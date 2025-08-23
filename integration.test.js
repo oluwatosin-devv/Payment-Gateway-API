@@ -1,5 +1,7 @@
 const request = require('supertest');
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production' && !process.env.CI) {
+  require('dotenv').config();
+}
 const app = require('./app');
 
 describe('Paystack Integration Test', () => {
