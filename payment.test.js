@@ -1,17 +1,42 @@
-jest.mock('axios');
-const axios = require('axios');
 const request = require('supertest');
 require('dotenv').config({ path: '.env' });
+
+jest.mock('axios');
+const axios = require('axios');
 const app = require('./app');
 
 describe('Payment Gateway Integration', () => {
+  let server;
+
+  beforeAll(async () => {
+    // Start server on a random port for testing
+    server = app.listen(0);
+    // Wait a bit for server to start
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  });
+
+  afterAll(async () => {
+    // Close server properly
+    if (server) {
+      await new Promise((resolve) => {
+        server.close(resolve);
+      });
+    }
+
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
   beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
+    // Use fake timers if your code uses setTimeout/setInterval
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
     // Clean up any pending timers
+    jest.runOnlyPendingTimers();
     jest.useRealTimers();
   });
 
