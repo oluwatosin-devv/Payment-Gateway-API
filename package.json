@@ -4,9 +4,11 @@
   "description": " a basic RESTful API that allows small businesses to accept payments ",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "start": "node server.js",
     "start:DEV": "NODE_ENV=development nodemon server.js",
-    "start:PROD": "NODE_ENV=production nodemon server.js"
+    "start:PROD": "NODE_ENV=production node server.js",
+    "build": "echo \"No build needed for plain JS API\""
   },
   "author": "oluwatosin oni",
   "license": "ISC",
@@ -15,5 +17,9 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "supertest": "^7.1.4"
   }
 }
