@@ -3,34 +3,28 @@ jest.mock('axios');
 
 const request = require('supertest');
 const axios = require('axios');
+
+process.env.NODE_ENV = 'test';
+process.env.PAYSTACK_SECRET_KEY = 'sk_test_mock_key_for_testing';
+
 require('dotenv').config({ path: '.env' });
 
-// Import app AFTER mocking axios
+// Import app AFTER setting up environment and mocking axios
 const app = require('./app');
-
-// Cast axios to mocked version for TypeScript-like intellisense
-const mockedAxios = axios;
 
 describe('Payment Gateway Integration', () => {
   // Set overall timeout for all tests
   jest.setTimeout(30000);
 
   beforeEach(() => {
-    // Clear all mocks before each test
+    // Clear all mocks before each test - this resets call counts but keeps mock functions
     jest.clearAllMocks();
 
-    // Ensure axios methods are properly mocked
-    mockedAxios.post = jest.fn();
-    mockedAxios.get = jest.fn();
+    // Don't recreate the mock functions, just reset them
+    // The jest.mock() at the top already created these as mock functions
   });
 
   afterAll(async () => {
-    // Close any database connections if you have them
-    // Example for MongoDB/Mongoose:
-    // if (mongoose.connection.readyState !== 0) {
-    //   await mongoose.connection.close();
-    // }
-
     // Force close any remaining connections
     await new Promise((resolve) => setTimeout(resolve, 100));
   });
@@ -40,7 +34,7 @@ describe('Payment Gateway Integration', () => {
       console.log('Starting payment test...');
 
       // Mock Paystack initialize response
-      mockedAxios.post.mockResolvedValueOnce({
+      axios.post.mockResolvedValueOnce({
         data: {
           status: true,
           message: 'Authorization URL created',
@@ -53,6 +47,10 @@ describe('Payment Gateway Integration', () => {
       });
 
       console.log('Mock set up, making request...');
+      console.log(
+        'Environment check - PAYSTACK_SECRET_KEY exists:',
+        !!process.env.PAYSTACK_SECRET_KEY
+      );
 
       const res = await request(app).post('/api/v1/payments').send({
         firstName: 'John',
@@ -66,6 +64,7 @@ describe('Payment Gateway Integration', () => {
 
       console.log('Request completed, response status:', res.status);
       console.log('Response body:', res.body);
+      console.log('axios.post call count:', axios.post.mock.calls.length);
 
       expect(res.status).toBe(200);
       expect(res.body.status).toBe('success');
@@ -74,7 +73,7 @@ describe('Payment Gateway Integration', () => {
       );
 
       // Verify that axios.post was called with correct parameters
-      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+      expect(axios.post).toHaveBeenCalledTimes(1);
       console.log('Test completed successfully');
     });
   });
@@ -84,7 +83,7 @@ describe('Payment Gateway Integration', () => {
       console.log('Starting status retrieval test...');
 
       // Mock Paystack verify response
-      mockedAxios.get.mockResolvedValueOnce({
+      axios.get.mockResolvedValueOnce({
         data: {
           status: true,
           data: {
@@ -103,6 +102,7 @@ describe('Payment Gateway Integration', () => {
 
       console.log('GET request completed, response status:', res.status);
       console.log('Response body:', res.body);
+      console.log('axios.get call count:', axios.get.mock.calls.length);
 
       expect(res.status).toBe(200);
       expect(res.body.status).toBe('success');
@@ -117,7 +117,7 @@ describe('Payment Gateway Integration', () => {
       });
 
       // Verify that axios.get was called
-      expect(mockedAxios.get).toHaveBeenCalledTimes(1);
+      expect(axios.get).toHaveBeenCalledTimes(1);
       console.log('GET test completed successfully');
     });
   });
