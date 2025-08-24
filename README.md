@@ -128,9 +128,9 @@ All endpoints are versioned under `/api/v1`
 
 ```json
 {
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "john.doe@example.com",
+  "firstName": "oluwatosin",
+  "lastName": "oni",
+  "email": "devzic@example.com",
   "phoneNumber": "+2348012345678",
   "amount": 10000,
   "state": "Lagos",
@@ -163,8 +163,8 @@ All endpoints are versioned under `/api/v1`
   "message": "Transaction details retrieved successfully.",
   "payment": {
     "customer_name": "Oni oluwatosin",
-    "customer_email": "bookhizic@gmail.com",
-    "amount": 2000,
+    "customer_email": "devzic@example.com",
+    "amount": 10000,
     "status": "Declined"
   }
 }
