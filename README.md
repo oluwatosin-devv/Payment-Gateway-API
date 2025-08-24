@@ -151,7 +151,7 @@ All endpoints are versioned under `/api/v1`
 }
 ```
 
-### GET /api/v1/payments/{id}
+### GET /api/v1/payments/{reference}
 
 **Retrieve payment transaction status**
 
