@@ -55,7 +55,7 @@ PORT=3000
 
 ```bash
 
-git clone <https://github.com/oluwatosin-devv/Payment-Gateway-API>
+git clone https://github.com/oluwatosin-devv/Payment-Gateway-API
 ```
 
 ### 2. Install Dependencies
